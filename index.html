@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест · Какая профессия вторичного сектора — твоя?</title>
+<style>
+  :root{
+    --bg-1:#0a0f18; --bg-2:#111827;
+    --orange:#f97316; --orange-light:#fb923c; --orange-dark:#c2410c; --orange-soft:#ffedd5;
+    --blue:#3b82f6; --blue-dark:#1e40af;
+    --amber:#f59e0b; --gold:#fbbf24; --purple:#a78bfa; --teal:#14b8a6;
+    --card:#ffffff; --card-soft:#f8fafc;
+    --ink:#0f172a; --soft:#64748b; --line:#e2e8f0;
+    --ok:#10b981; --err:#ef4444;
+    --shadow-card:0 20px 50px rgba(0,0,0,.45);
+    --shadow-orange:0 10px 30px rgba(249,115,22,.4);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,'Nunito',sans-serif;
+    background:
+      radial-gradient(ellipse at top left, #1e293b 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, #0a0f18 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    background-attachment:fixed;
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+  }
+  #bgFX{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  #bgFX .bg-item{
+    position:absolute;bottom:-20vh;display:block;opacity:0;
+    will-change:transform,opacity;
+    animation-name:riseIndustrial;animation-timing-function:linear;
+    animation-iteration-count:infinite;
+    filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));
+  }
+  @keyframes riseIndustrial{
+    0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0}
+    8%{opacity:var(--op,.10)}
+    92%{opacity:var(--op,.10)}
+    100%{transform:translate3d(var(--dx,0),-140vh,0) rotate(var(--rot,15deg));opacity:0}
+  }
+  .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+  .glow.g1{width:420px;height:420px;background:rgba(249,115,22,.10);top:-100px;left:-100px}
+  .glow.g2{width:380px;height:380px;background:rgba(59,130,246,.10);top:40%;right:-120px}
+  .glow.g3{width:440px;height:440px;background:rgba(251,191,36,.08);bottom:-140px;left:20%}
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:150;overflow:hidden}
+  .particle{position:absolute;font-size:20px;animation:fall 1.5s linear forwards}
+  @keyframes fall{to{transform:translateY(115vh) rotate(540deg);opacity:0}}
+  .wrap{max-width:820px;margin:0 auto;padding:22px 16px 80px;position:relative;z-index:2}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;
+    gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px;color:#fff}
+  .brand-logo{
+    width:44px;height:44px;border-radius:13px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--orange),var(--amber));
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    box-shadow:var(--shadow-orange);position:relative;
+  }
+  .brand-logo::after{content:"";position:absolute;inset:3px;border-radius:10px;
+    border:1.5px solid rgba(255,255,255,.4)}
+  .brand-text{display:flex;flex-direction:column;line-height:1.1}
+  .brand-text b{font-size:15px;color:#fff;font-weight:900}
+  .brand-text span{font-size:11.5px;font-weight:700;color:var(--orange-light);
+    letter-spacing:.5px;text-transform:uppercase}
+
+  .card{
+    background:var(--card);border-radius:24px;
+    box-shadow:var(--shadow-card);padding:30px;
+    position:relative;overflow:hidden;
+    animation:pop .4s ease;
+  }
+  .card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg,var(--orange),var(--blue),var(--amber));
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+  .intro-hero{text-align:center;padding:10px 0 20px}
+  .intro-hero .ih-emoji{
+    font-size:80px;display:inline-block;
+    animation:float 3s ease-in-out infinite;margin-bottom:10px;
+    filter:drop-shadow(0 10px 24px rgba(249,115,22,.35));
+  }
+  .intro-hero h1{
+    font-size:clamp(24px,4vw,32px);margin:8px 0 12px;
+    letter-spacing:-.6px;font-weight:900;line-height:1.2;color:var(--ink);
+  }
+  .intro-hero h1 span{
+    background:linear-gradient(135deg,var(--orange-dark),var(--blue-dark));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .intro-hero p{
+    font-size:15px;line-height:1.7;color:var(--soft);
+    margin:0 auto;max-width:540px;font-weight:500;
+  }
+  .intro-hero p b{color:var(--ink);font-weight:800}
+
+  .intro-stats{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;margin:24px 0;
+  }
+  .stat-card{
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border:1px solid var(--line);border-radius:14px;
+    padding:16px 14px;text-align:center;
+  }
+  .stat-card .sc-emoji{font-size:28px;display:block;margin-bottom:6px}
+  .stat-card .sc-num{font-size:22px;font-weight:900;color:var(--ink);line-height:1}
+  .stat-card .sc-label{
+    font-size:11px;font-weight:800;color:var(--soft);
+    letter-spacing:.5px;text-transform:uppercase;margin-top:6px;
+  }
+
+  .start-btn{
+    width:100%;padding:18px 26px;font-family:inherit;
+    font-weight:900;font-size:17px;
+    background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+    color:#fff;border:none;border-radius:16px;cursor:pointer;
+    box-shadow:var(--shadow-orange);transition:.2s;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .start-btn:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .start-btn:active{transform:scale(.98)}
+
+  .progress-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:14px;font-size:12.5px;font-weight:800;
+    color:var(--soft);letter-spacing:.3px;
+  }
+  .progress-row .pr-num{
+    background:var(--orange-soft);color:var(--orange-dark);
+    padding:4px 12px;border-radius:999px;
+    font-size:11.5px;font-weight:900;
+  }
+  .progress-bar{
+    height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progress-bar>div{
+    height:100%;width:0;
+    background:linear-gradient(90deg,var(--orange),var(--blue));
+    border-radius:5px;transition:width .4s ease;
+  }
+
+  .question-emoji{
+    font-size:56px;display:block;margin-bottom:14px;
+    filter:drop-shadow(0 6px 16px rgba(249,115,22,.25));
+    animation:float 3s ease-in-out infinite;
+  }
+  .question-text{
+    font-size:clamp(20px,3vw,24px);font-weight:900;
+    color:var(--ink);line-height:1.3;margin:0 0 22px;
+    letter-spacing:-.3px;
+  }
+
+  .options{display:grid;gap:10px}
+  .option-btn{
+    display:flex;align-items:center;gap:14px;
+    padding:16px 18px;
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border:2px solid var(--line);border-radius:14px;
+    cursor:pointer;font-family:inherit;font-size:15px;
+    font-weight:700;color:var(--ink);text-align:left;
+    transition:.2s;line-height:1.4;
+  }
+  .option-btn:hover{
+    border-color:var(--orange);
+    background:linear-gradient(135deg,#fff7ed,#ffedd5);
+    transform:translateX(4px);
+  }
+  .option-btn:active{transform:scale(.98)}
+  .option-btn .ob-letter{
+    flex-shrink:0;width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,var(--orange-dark),var(--orange));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:15px;
+    box-shadow:0 4px 10px rgba(194,65,12,.35);
+  }
+  .option-btn .ob-text{flex:1}
+  .option-btn .ob-arrow{
+    color:var(--orange-dark);font-weight:900;font-size:16px;
+    opacity:0;transition:.2s;
+  }
+  .option-btn:hover .ob-arrow{opacity:1;transform:translateX(2px)}
+
+  .back-row{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .back-btn{
+    padding:10px 18px;font-family:inherit;font-weight:800;
+    font-size:13px;background:transparent;color:var(--soft);
+    border:1px solid var(--line);border-radius:10px;cursor:pointer;
+    transition:.2s;
+  }
+  .back-btn:hover:not(:disabled){background:#f1f5f9;color:var(--ink)}
+  .back-btn:disabled{opacity:.4;cursor:not-allowed}
+  .back-hint{font-size:12px;color:var(--soft);font-weight:600}
+
+  .result-hero{text-align:center;padding:8px 0 22px}
+  .result-hero .rh-medal{
+    font-size:80px;display:inline-block;
+    animation:float 3s ease-in-out infinite;margin-bottom:10px;
+    filter:drop-shadow(0 12px 30px rgba(251,191,36,.5));
+  }
+  .result-hero .rh-tag{
+    display:inline-block;padding:6px 16px;
+    background:var(--orange-soft);color:var(--orange-dark);
+    border-radius:999px;font-size:11.5px;font-weight:900;
+    letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;
+  }
+  .result-hero h2{
+    font-size:clamp(26px,4vw,34px);margin:6px 0 8px;
+    letter-spacing:-.6px;font-weight:900;line-height:1.15;
+    color:var(--ink);
+  }
+  .result-hero .rh-prof{
+    display:inline-block;
+    background:linear-gradient(135deg,var(--orange-dark),var(--orange));
+    color:#fff;padding:12px 26px;border-radius:14px;
+    font-size:20px;font-weight:900;margin:8px 0;
+    box-shadow:var(--shadow-orange);
+  }
+  .result-hero .rh-why{
+    font-size:14.5px;line-height:1.65;color:var(--soft);
+    max-width:520px;margin:14px auto 0;font-weight:500;
+  }
+  .result-hero .rh-why b{color:var(--ink);font-weight:800}
+
+  .traits-row{
+    margin:18px 0;padding:16px;
+    background:linear-gradient(135deg,#fff7ed,#ffedd5);
+    border-radius:14px;border-left:4px solid var(--orange);
+  }
+  .traits-row .tr-title{
+    font-size:12px;font-weight:900;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--orange-dark);margin-bottom:10px;
+  }
+  .traits-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .trait-chip{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:5px 11px;background:#fff;border:1px solid var(--orange);
+    border-radius:999px;font-size:12.5px;font-weight:800;
+    color:var(--orange-dark);
+  }
+
+  .top-list{display:grid;gap:10px;margin:20px 0}
+  .top-item{
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border:2px solid var(--line);border-radius:14px;
+    padding:14px 16px;display:flex;align-items:center;gap:14px;
+    transition:.2s;
+  }
+  .top-item:hover{border-color:var(--orange);transform:translateX(2px)}
+  .top-item.first{
+    background:linear-gradient(135deg,#fef3c7,#fde68a);
+    border-color:var(--amber);
+  }
+  .top-item .ti-medal{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+  .top-item .ti-body{flex:1;min-width:0}
+  .top-item .ti-name{
+    font-size:15px;font-weight:900;color:var(--ink);line-height:1.3;
+    margin-bottom:3px;
+  }
+  .top-item .ti-cat{font-size:11.5px;font-weight:700;color:var(--soft)}
+  .top-item .ti-bar{
+    height:6px;background:#fff;border-radius:3px;margin-top:6px;
+    overflow:hidden;border:1px solid var(--line);
+  }
+  .top-item .ti-bar>div{
+    height:100%;background:linear-gradient(90deg,var(--orange),var(--amber));
+    border-radius:3px;transition:width .6s ease;
+  }
+  .top-item .ti-percent{font-size:14px;font-weight:900;color:var(--orange-dark);flex-shrink:0}
+  .top-item .ti-detail{
+    flex-shrink:0;padding:8px 14px;font-family:inherit;
+    font-weight:800;font-size:12px;
+    background:var(--orange);color:#fff;
+    border:none;border-radius:10px;cursor:pointer;transition:.2s;
+    white-space:nowrap;
+  }
+  .top-item .ti-detail:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+  .chart-section{
+    margin:26px 0 18px;padding:20px;
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border:1px solid var(--line);border-radius:18px;
+  }
+  .chart-title{
+    font-size:13px;font-weight:900;letter-spacing:.5px;
+    text-transform:uppercase;color:var(--soft);
+    margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  }
+  .chart-title::after{content:"";flex:1;height:1px;background:var(--line)}
+  .chart-rows{display:grid;gap:8px}
+  .chart-row{
+    display:grid;grid-template-columns:1fr auto;
+    gap:6px 10px;align-items:center;
+    padding:8px 10px;background:#fff;
+    border:1px solid var(--line);border-radius:10px;
+    transition:.15s;cursor:pointer;
+  }
+  .chart-row:hover{border-color:var(--orange);
+    box-shadow:0 4px 12px rgba(249,115,22,.15)}
+  .chart-row.first{background:linear-gradient(135deg,#fef3c7,#fde68a);
+    border-color:var(--amber)}
+  .chart-row .cr-head{
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:800;color:var(--ink);min-width:0;
+  }
+  .chart-row .cr-emoji{font-size:18px;flex-shrink:0}
+  .chart-row .cr-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .chart-row .cr-percent{
+    font-size:12.5px;font-weight:900;color:var(--orange-dark);
+    grid-column:2;grid-row:1;
+  }
+  .chart-row .cr-bar-wrap{
+    grid-column:1/-1;
+    height:10px;background:#f1f5f9;border-radius:5px;
+    overflow:hidden;border:1px solid var(--line);
+  }
+  .chart-row .cr-bar{
+    height:100%;border-radius:5px;
+    transition:width .8s cubic-bezier(.2,.9,.3,1.2);
+    background:linear-gradient(90deg,var(--orange),var(--amber));
+  }
+  .chart-row.cat-construction .cr-bar{background:linear-gradient(90deg,#f97316,#c2410c)}
+  .chart-row.cat-manufacturing .cr-bar{background:linear-gradient(90deg,#3b82f6,#1e40af)}
+  .chart-row.cat-mechanical .cr-bar{background:linear-gradient(90deg,#64748b,#334155)}
+  .chart-row.cat-energy .cr-bar{background:linear-gradient(90deg,#fbbf24,#d97706)}
+  .chart-row.cat-electronics .cr-bar{background:linear-gradient(90deg,#a78bfa,#7c3aed)}
+  .chart-row.cat-food .cr-bar{background:linear-gradient(90deg,#14b8a6,#0f766e)}
+  .chart-row.cat-textile .cr-bar{background:linear-gradient(90deg,#ec4899,#be185d)}
+  .chart-row.cat-chemistry .cr-bar{background:linear-gradient(90deg,#84cc16,#4d7c0f)}
+
+  .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .action-row button{
+    flex:1;min-width:140px;padding:14px 20px;
+    font-family:inherit;font-weight:800;font-size:14px;
+    border-radius:13px;border:none;cursor:pointer;transition:.2s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+    color:#fff;box-shadow:var(--shadow-orange);
+  }
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .btn-secondary{
+    background:var(--card-soft);color:var(--ink);border:1px solid var(--line);
+  }
+  .btn-secondary:hover{background:#eef2f7}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(5,10,20,.88);
+    backdrop-filter:blur(8px);z-index:200;
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;opacity:0;pointer-events:none;transition:.25s;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto}
+  .modal{
+    background:#fff;border-radius:24px;max-width:680px;width:100%;
+    max-height:92vh;overflow-y:auto;
+    box-shadow:0 40px 100px rgba(0,0,0,.7);
+    transform:scale(.94);transition:.28s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .modal-overlay.open .modal{transform:scale(1)}
+  .modal-head{
+    padding:26px 28px 20px;position:relative;color:#fff;
+    border-radius:24px 24px 0 0;overflow:hidden;
+  }
+  .modal-head::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--amber),var(--orange));z-index:2;
+  }
+  .mh-emoji{font-size:52px;line-height:1;margin-bottom:10px;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.3))}
+  .modal-head h2{margin:0;font-size:21px;font-weight:900;line-height:1.25}
+  .modal-head .mh-cat{
+    display:inline-block;padding:3px 12px;border-radius:999px;
+    font-size:11px;font-weight:900;letter-spacing:.6px;
+    text-transform:uppercase;margin-top:8px;
+    background:rgba(255,255,255,.2);color:#fff;
+    backdrop-filter:blur(4px);
+  }
+  .modal-close{
+    position:absolute;top:16px;right:16px;width:36px;height:36px;
+    border-radius:50%;border:none;background:rgba(255,255,255,.18);
+    color:#fff;font-size:18px;font-weight:900;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:.2s;z-index:3;
+  }
+  .modal-close:hover{background:rgba(255,255,255,.32);transform:rotate(90deg)}
+  .modal-body{padding:22px 26px 26px}
+
+  .m-section{margin-bottom:22px}
+  .m-section:last-child{margin-bottom:0}
+  .m-section-title{
+    font-size:11.5px;font-weight:900;letter-spacing:1px;
+    text-transform:uppercase;margin:0 0 10px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .m-section-title::after{
+    content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,currentColor,transparent);
+    opacity:.3;
+  }
+  .m-section-title.icon-about{color:var(--orange-dark)}
+  .m-section-title.icon-track{color:var(--amber)}
+  .m-section-title.icon-feat{color:var(--blue)}
+  .m-section-title.icon-opp{color:var(--ok)}
+  .m-section-title.icon-risk{color:var(--err)}
+  .m-section-title.icon-fact{color:var(--purple)}
+
+  .m-desc{
+    font-size:14px;line-height:1.65;color:var(--ink);font-weight:500;
+    background:linear-gradient(135deg,#fff7ed,#ffedd5);
+    padding:14px 16px;border-radius:12px;
+    border-left:4px solid var(--orange);
+  }
+  .career-track{
+    display:flex;gap:0;flex-wrap:nowrap;overflow-x:auto;
+    padding:6px 0 12px;
+  }
+  .career-step{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    min-width:110px;flex:1;position:relative;
+    text-align:center;padding:0 4px;
+  }
+  .career-step:not(:last-child)::after{
+    content:"→";position:absolute;right:-8px;top:18px;
+    font-size:18px;color:var(--orange);font-weight:900;
+  }
+  .career-step .cs-num{
+    width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:16px;
+    box-shadow:0 6px 14px rgba(249,115,22,.4);
+  }
+  .career-step:nth-child(2) .cs-num{background:linear-gradient(135deg,#fbbf24,#d97706)}
+  .career-step:nth-child(3) .cs-num{background:linear-gradient(135deg,#3b82f6,#1e40af)}
+  .career-step:nth-child(4) .cs-num{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+  .career-step:nth-child(5) .cs-num{background:linear-gradient(135deg,#14b8a6,#0f766e)}
+  .career-step .cs-title{
+    font-size:11.5px;font-weight:900;color:var(--ink);line-height:1.3;
+  }
+  .career-step .cs-years{
+    font-size:10px;font-weight:700;color:var(--soft);
+    background:#f1f5f9;padding:2px 7px;border-radius:999px;
+  }
+  .salary-row{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+    margin-top:10px;
+  }
+  .salary-card{
+    background:linear-gradient(135deg,#f8fafc,#eef2f7);
+    border-radius:11px;padding:10px 8px;text-align:center;
+    border:1px solid var(--line);
+  }
+  .salary-card .sc-label{
+    font-size:10px;font-weight:900;letter-spacing:.4px;
+    text-transform:uppercase;color:var(--soft);margin-bottom:3px;
+  }
+  .salary-card .sc-value{
+    font-size:14px;font-weight:900;color:var(--orange-dark);line-height:1.2;
+  }
+  .salary-card .sc-sub{font-size:10px;color:var(--soft);font-weight:600;margin-top:2px}
+
+  .m-list{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+  .m-list li{
+    padding:10px 13px;border-radius:11px;
+    font-size:13px;line-height:1.5;font-weight:500;
+    display:flex;gap:9px;align-items:flex-start;
+  }
+  .m-list li .ml-icon{flex-shrink:0;font-size:15px;line-height:1.4}
+  .m-list li .ml-text{flex:1}
+  .m-list li .ml-text b{font-weight:900}
+  .m-list.feat li{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-left:3px solid var(--blue)}
+  .m-list.feat li .ml-text b{color:#1e40af}
+  .m-list.opp li{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-left:3px solid var(--ok)}
+  .m-list.opp li .ml-text b{color:#166534}
+  .m-list.risk li{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:3px solid var(--err)}
+  .m-list.risk li .ml-text b{color:#991b1b}
+  .fact-box{
+    background:linear-gradient(135deg,#f3e8ff,#e9d5ff);
+    padding:13px 16px;border-radius:12px;
+    border-left:4px solid var(--purple);
+    font-size:13.5px;line-height:1.55;color:#6b21a8;font-weight:600;
+  }
+  .fact-box b{font-weight:900;color:#6b21a8}
+
+  #toast{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(100px);
+    background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+    color:#fff;
+    padding:14px 24px;border-radius:14px;font-weight:900;font-size:14px;
+    box-shadow:0 20px 50px rgba(249,115,22,.5);z-index:300;
+    opacity:0;transition:.4s;pointer-events:none;max-width:90vw;text-align:center;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .promo-line{
+    margin-top:26px;font-size:12px;color:rgba(255,255,255,.55);
+    text-align:center;line-height:1.65;padding:16px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  .promo-line b{color:var(--orange-light);font-weight:900}
+  .promo-line a{color:var(--gold);font-weight:700;text-decoration:none;
+    border-bottom:1px dashed currentColor}
+
+  @media(max-width:600px){
+    .wrap{padding:16px 12px 80px}
+    .card{padding:22px 18px;border-radius:20px}
+    .question-emoji{font-size:44px}
+    .option-btn{padding:14px 14px;font-size:14px;gap:11px}
+    .option-btn .ob-letter{width:32px;height:32px;font-size:14px}
+    .intro-hero .ih-emoji{font-size:64px}
+    .result-hero .rh-medal{font-size:64px}
+    .top-item{padding:12px;gap:10px;flex-wrap:wrap}
+    .top-item .ti-detail{width:100%;margin-top:6px}
+    .top-item .ti-medal{font-size:22px;width:30px}
+    .start-btn{font-size:16px;padding:16px 20px}
+    .brand-logo{width:38px;height:38px;font-size:18px}
+    .brand-text b{font-size:13.5px}
+    .modal-head{padding:20px 18px 16px}
+    .modal-head h2{font-size:17px}
+    .mh-emoji{font-size:40px}
+    .modal-body{padding:16px 18px 20px}
+    .career-step{min-width:95px}
+    .career-step .cs-num{width:34px;height:34px;font-size:13px}
+    .career-step .cs-title{font-size:10.5px}
+    .salary-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="glow g3"></div>
+<div id="bgFX" aria-hidden="true"></div>
+<div id="fx"></div>
+<div id="toast"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="brand-logo">🏭</div>
+      <div class="brand-text">
+        <b>Мягкая математика</b>
+        <span>Тест · вторичный сектор</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <div class="promo-line">
+    <b>Мягкая математика</b> · проект развития математических способностей ·
+    <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">группа ВК</a> ·
+    <a href="https://vk.com/im/convo/-229273902?entrypoint=community_page&amp;tab=all" target="_blank" rel="noopener">написать Марии Абрамовой</a>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head" id="modalHead">
+      <button class="modal-close" id="modalClose" type="button">✕</button>
+      <div class="mh-emoji" id="mhEmoji">🏭</div>
+      <h2 id="mhTitle">Профессия</h2>
+      <div class="mh-cat" id="mhCat">Категория</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ==================== ВОПРОСЫ ==================== */
+const QUESTIONS = [
+  {
+    emoji: '🏗',
+    q: 'Где тебе было бы приятнее работать?',
+    options: [
+      {text: 'На стройплощадке, где строят дом', tags:['construction','hands']},
+      {text: 'На заводе, где делают технику', tags:['factory','tech']},
+      {text: 'В лаборатории, где создают материалы', tags:['lab','science']},
+      {text: 'В мастерской, где чинят машины', tags:['hands','tech']},
+      {text: 'В офисе с чертежами и моделями', tags:['office','design']}
+    ]
+  },
+  {
+    emoji: '💡',
+    q: 'Что тебе интереснее всего делать?',
+    options: [
+      {text: 'Строить и проектировать здания', tags:['construction','design']},
+      {text: 'Придумывать, как работает техника', tags:['tech','science']},
+      {text: 'Создавать новые материалы и продукты', tags:['lab','science']},
+      {text: 'Ремонтировать и собирать механизмы', tags:['hands','tech']},
+      {text: 'Планировать процессы и поставки', tags:['org','money']}
+    ]
+  },
+  {
+    emoji: '🛠',
+    q: 'Какая работа тебе ближе?',
+    options: [
+      {text: 'Работа руками, с инструментами', tags:['hands']},
+      {text: 'С наукой и расчётами', tags:['science','tech']},
+      {text: 'С творчеством и дизайном', tags:['design','creativity']},
+      {text: 'С людьми и организацией', tags:['team','org']},
+      {text: 'С компьютерами и программами', tags:['tech']}
+    ]
+  },
+  {
+    emoji: '👥',
+    q: 'Как тебе комфортнее работать?',
+    options: [
+      {text: 'Сам по себе, в одиночку', tags:['solo']},
+      {text: 'В небольшой команде', tags:['team']},
+      {text: 'В большой команде', tags:['team']},
+      {text: 'Руководить другими', tags:['team','org']}
+    ]
+  },
+  {
+    emoji: '⚡',
+    q: 'Как ты относишься к риску и ответственности?',
+    options: [
+      {text: 'Люблю стабильность и предсказуемость', tags:['stable']},
+      {text: 'Готов нести ответственность за других', tags:['org','stable']},
+      {text: 'Обожаю риск и адреналин', tags:['risk']},
+      {text: 'Мне всё равно', tags:[]}
+    ]
+  },
+  {
+    emoji: '🌟',
+    q: 'Что из этого тебе ближе всего?',
+    options: [
+      {text: 'Придумать, как построить небоскрёб', tags:['construction','design']},
+      {text: 'Разобрать и починить прибор', tags:['hands','tech']},
+      {text: 'Изобрести новое лекарство', tags:['lab','science']},
+      {text: 'Придумать новую коллекцию одежды', tags:['design','creativity']},
+      {text: 'Организовать работу целого завода', tags:['org','team']}
+    ]
+  },
+  {
+    emoji: '🎯',
+    q: 'Что тебя мотивирует?',
+    options: [
+      {text: 'Хорошая зарплата и стабильность', tags:['money','stable']},
+      {text: 'Создать что-то новое', tags:['creativity','design']},
+      {text: 'Научное открытие', tags:['science','lab']},
+      {text: 'Увидеть результат своего труда', tags:['hands','construction']},
+      {text: 'Быть лидером и вести команду', tags:['org','team']}
+    ]
+  },
+  {
+    emoji: '🌿',
+    q: 'Чем бы ты занялся в выходной?',
+    options: [
+      {text: 'Собрал бы что-нибудь своими руками', tags:['hands','tech']},
+      {text: 'Почитал бы про новые технологии', tags:['tech','science']},
+      {text: 'Порисовал бы или сделал дизайн', tags:['design','creativity']},
+      {text: 'Разобрал бы старый прибор на детали', tags:['hands','tech']},
+      {text: 'Построил бы что-то большое', tags:['construction']}
+    ]
+  },
+  {
+    emoji: '💪',
+    q: 'Что у тебя лучше всего получается?',
+    options: [
+      {text: 'Работать руками и с инструментами', tags:['hands']},
+      {text: 'Анализировать и решать задачи', tags:['science','tech']},
+      {text: 'Придумывать красивое и удобное', tags:['design','creativity']},
+      {text: 'Организовывать и вести за собой', tags:['org','team']},
+      {text: 'Точно следовать инструкциям и планам', tags:['stable','org']}
+    ]
+  },
+  {
+    emoji: '🚀',
+    q: 'Какая у тебя мечта?',
+    options: [
+      {text: 'Построить самый высокий небоскрёб', tags:['construction','design']},
+      {text: 'Создать крутой автомобиль или робота', tags:['tech','science']},
+      {text: 'Открыть свой завод', tags:['money','org','factory']},
+      {text: 'Стать великим инженером-изобретателем', tags:['science','tech','creativity']},
+      {text: 'Стать известным архитектором или дизайнером', tags:['design','creativity']}
+    ]
+  }
+];
+
+/* ==================== КАТЕГОРИИ ==================== */
+const CATEGORIES = {
+  construction:  {emoji:'🏗', name:'Строительство', cls:'cat-construction'},
+  manufacturing: {emoji:'🏭', name:'Производство',  cls:'cat-manufacturing'},
+  mechanical:    {emoji:'⚙️', name:'Механика',      cls:'cat-mechanical'},
+  energy:        {emoji:'⚡', name:'Энергия',       cls:'cat-energy'},
+  electronics:   {emoji:'🔌', name:'Электроника',   cls:'cat-electronics'},
+  food:          {emoji:'🍞', name:'Еда',           cls:'cat-food'},
+  textile:       {emoji:'👕', name:'Одежда',        cls:'cat-textile'},
+  chemistry:     {emoji:'🧪', name:'Химия',         cls:'cat-chemistry'}
+};
+
+/* ==================== ПРОФЕССИИ ==================== */
+const PROFESSIONS = {
+  builder: {
+    name:'Инженер-строитель', emoji:'🏗', cat:'construction',
+    tags:{construction:3, science:2, hands:1, stable:1},
+    why:'Ты любишь стройку, умеешь думать и просчитывать — идеальный набор для инженера-строителя. Ты видишь результат своей работы в реальных домах и мостах.',
+    desc:'Инженер-строитель — «мозг» стройки. Он рассчитывает, выдержат ли конструкции нагрузку, выбирает материалы, следит за соблюдением технологий. Без него не построить ни дом, ни мост, ни небоскрёб.',
+    career:[{title:'Помощник инженера',years:'0–1 год'},{title:'Инженер-строитель',years:'1–3 года'},{title:'Ведущий инженер',years:'3–7 лет'},{title:'Главный инженер',years:'7+ лет'},{title:'Руководитель проекта',years:'12+ лет'}],
+    salary:{start:'50 000 ₽',mid:'100 000 ₽',senior:'250 000+ ₽'},
+    features:[{icon:'📐',text:'<b>Точность</b> — каждая цифра в расчёте имеет значение'},{icon:'🏗',text:'<b>Стройплощадки</b> — часть времени в офисе за чертежами, часть — на объекте'},{icon:'🎓',text:'<b>Высшее образование</b> — нужно закончить строительный вуз'}],
+    opportunities:[{icon:'📈',text:'<b>Карьерный рост</b> — от помощника до руководителя проектов'},{icon:'💰',text:'<b>Высокие зарплаты</b> — опытные инженеры в дефиците'},{icon:'🌍',text:'<b>Крупные проекты</b> — можно строить небоскрёбы, мосты, стадионы'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — ошибка в расчёте может стоить жизней'},{icon:'🏗',text:'<b>Условия стройки</b> — грязь, шум, погода, работа в холод и жару'},{icon:'⏰',text:'<b>Сроки</b> — иногда приходится работать сверхурочно, чтобы сдать объект'}],
+    fact:'Самый высокий небоскрёб в мире — Бурдж-Халифа (828 метров) — строили <b>6 лет</b> и использовали 330 000 кубометров бетона.'
+  },
+  foreman: {
+    name:'Прораб', emoji:'👷', cat:'construction',
+    tags:{construction:2, team:3, org:3, money:1},
+    why:'Ты умеешь вести за собой и организовывать других — это то, что нужно прорабу. Ты не боишься ответственности и любишь видеть, как всё движется к цели.',
+    desc:'Прораб — «капитан» стройплощадки. Он распределяет, кто что делает, следит за качеством, решает проблемы, отчитывается перед заказчиком. Без прораба стройка встанет.',
+    career:[{title:'Мастер участка',years:'0–2 года'},{title:'Прораб',years:'2–5 лет'},{title:'Старший прораб',years:'5–10 лет'},{title:'Начальник участка',years:'10+ лет'},{title:'Директор стройки',years:'15+ лет'}],
+    salary:{start:'60 000 ₽',mid:'120 000 ₽',senior:'220 000+ ₽'},
+    features:[{icon:'👥',text:'<b>Работа с людьми</b> — нужно уметь договариваться с бригадами'},{icon:'🗓',text:'<b>Планирование</b> — каждый день расписан по часам'},{icon:'🏗',text:'<b>Стройплощадка</b> — почти всё время на объекте, а не в офисе'}],
+    opportunities:[{icon:'📈',text:'<b>Быстрый рост</b> — при хороших результатах можно стать директором стройки'},{icon:'💰',text:'<b>Высокий доход</b> — прорабы ценятся на рынке'},{icon:'🏗',text:'<b>Крупные объекты</b> — можно вести стройки жилых комплексов, заводов'}],
+    risks:[{icon:'😤',text:'<b>Стресс</b> — постоянные дедлайны, конфликты, аварийные ситуации'},{icon:'⏰',text:'<b>Ненормированный день</b> — иногда работа с 6 утра до ночи'},{icon:'☔',text:'<b>Погода</b> — на стройке работают и в дождь, и в мороз'}],
+    fact:'Хороший прораб экономит застройщику <b>до 15% бюджета</b> — за счёт оптимизации процессов и материалов.'
+  },
+  architect: {
+    name:'Архитектор', emoji:'🏢', cat:'construction',
+    tags:{design:3, creativity:3, construction:1, solo:1, science:1},
+    why:'Ты творческий и любишь придумывать новое — тебе подходит архитектура. Ты можешь соединить красоту и инженерию, чтобы создать что-то, чего раньше не было.',
+    desc:'Архитектор — «художник и инженер в одном». Он придумывает облик здания, планировку, сочетание с окружающей средой. При этом его идеи должны быть реальны — с точки зрения физики и законов.',
+    career:[{title:'Помощник архитектора',years:'0–2 года'},{title:'Архитектор',years:'2–5 лет'},{title:'Ведущий архитектор',years:'5–10 лет'},{title:'Главный архитектор проекта',years:'10+ лет'},{title:'Руководитель бюро',years:'15+ лет'}],
+    salary:{start:'45 000 ₽',mid:'100 000 ₽',senior:'300 000+ ₽'},
+    features:[{icon:'🎨',text:'<b>Творчество</b> — придумываешь то, чего ещё не было'},{icon:'📐',text:'<b>Точность</b> — идеи должны быть реализуемы'},{icon:'💻',text:'<b>Современные программы</b> — 3D-моделирование, визуализация'}],
+    opportunities:[{icon:'🏆',text:'<b>Известность</b> — лучшие архитекторы становятся звёздами'},{icon:'💰',text:'<b>Высокий доход</b> — авторские проекты стоят дорого'},{icon:'🌍',text:'<b>Своё бюро</b> — можно открыть собственную мастерскую'}],
+    risks:[{icon:'📉',text:'<b>Зависимость от заказов</b> — в кризис проектов становится меньше'},{icon:'⚔️',text:'<b>Конфликты</b> — заказчик часто хочет не то, что задумал архитектор'},{icon:'🕐',text:'<b>Долгие проекты</b> — от идеи до реализации может пройти несколько лет'}],
+    fact:'Самый известный архитектор в истории — <b>Антонио Гауди</b>. Он строил собор Саграда Фамилия 43 года, но так и не увидел его завершённым.'
+  },
+  welder: {
+    name:'Сварщик', emoji:'🔨', cat:'construction',
+    tags:{hands:3, construction:2, risk:2, solo:2, money:1},
+    why:'Ты любишь работать руками и не боишься тяжёлых условий — сварка подходит тебе. Это профессия, где мастер видит реальный результат своих рук.',
+    desc:'Сварщик — мастер, который соединяет металлические детали с помощью высокой температуры. От его работы зависит прочность мостов, зданий, трубопроводов. Это одна из самых востребованных рабочих профессий.',
+    career:[{title:'Ученик сварщика',years:'0–1 год'},{title:'Сварщик',years:'1–3 года'},{title:'Сварщик высшего разряда',years:'3–7 лет'},{title:'Бригадир',years:'7+ лет'},{title:'Мастер участка',years:'12+ лет'}],
+    salary:{start:'50 000 ₽',mid:'100 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'🔥',text:'<b>Работа с огнём и металлом</b> — нужна выносливость и точность'},{icon:'👷',text:'<b>Защитная экипировка</b> — маска, перчатки, спецодежда'},{icon:'🌍',text:'<b>Везде нужен</b> — сварщики требуются в любой отрасли'}],
+    opportunities:[{icon:'💰',text:'<b>Высокие зарплаты</b> — опытные сварщики зарабатывают очень хорошо'},{icon:'📈',text:'<b>Быстрый вход</b> — можно выучиться за несколько месяцев'},{icon:'🌍',text:'<b>Работа за границей</b> — российские сварщики ценятся в Европе'}],
+    risks:[{icon:'⚠️',text:'<b>Опасная работа</b> — ожоги, искры, электричество'},{icon:'👁',text:'<b>Нагрузка на глаза</b> — яркий свет от сварки'},{icon:'🌡',text:'<b>Тяжёлые условия</b> — работа на высоте, в холоде, в неудобных позах'}],
+    fact:'Хороший сварщик может соединить металл так, что <b>шов будет прочнее самого металла</b>.'
+  },
+  technologist: {
+    name:'Инженер-технолог', emoji:'🏭', cat:'manufacturing',
+    tags:{science:2, tech:2, factory:2, money:2, team:1},
+    why:'Ты любишь анализировать и оптимизировать — тебе подходит работа технолога на заводе. Ты можешь сделать так, чтобы всё работало быстрее и лучше.',
+    desc:'Инженер-технолог — «мозг» завода. Он разрабатывает процесс производства: в каком порядке, на каком оборудовании, с какими параметрами. От него зависит, сколько завод выпустит и какого качества.',
+    career:[{title:'Техник-технолог',years:'0–2 года'},{title:'Инженер-технолог',years:'2–5 лет'},{title:'Ведущий технолог',years:'5–10 лет'},{title:'Главный технолог',years:'10+ лет'},{title:'Технический директор',years:'15+ лет'}],
+    salary:{start:'50 000 ₽',mid:'110 000 ₽',senior:'250 000+ ₽'},
+    features:[{icon:'📊',text:'<b>Оптимизация</b> — ищешь, как сделать быстрее и дешевле'},{icon:'🔬',text:'<b>Наука и практика</b> — нужно разбираться в технике и химии'},{icon:'🏭',text:'<b>Работа на заводе</b> — часть времени в цеху, часть — в офисе'}],
+    opportunities:[{icon:'📈',text:'<b>Карьерный рост</b> — от техника до технического директора'},{icon:'💰',text:'<b>Хороший доход</b> — технолог — ключевая фигура на заводе'},{icon:'🌍',text:'<b>Крупные производства</b> — можно работать в международных компаниях'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — ошибка в процессе = брак на всю партию'},{icon:'🏭',text:'<b>Условия</b> — шум, запахи, жара в цеху'},{icon:'⏰',text:'<b>Аварии</b> — иногда надо приезжать на завод даже ночью'}],
+    fact:'Именно технологи придумали <b>конвейер</b> — это позволило Ford выпускать автомобиль за 93 минуты вместо 12 часов.'
+  },
+  designer: {
+    name:'Инженер-конструктор', emoji:'📐', cat:'manufacturing',
+    tags:{science:2, tech:3, design:2, solo:2},
+    why:'Ты любишь разбираться, как устроены вещи, и придумывать новые — это работа конструктора. Ты можешь создавать технику, которой ещё не было.',
+    desc:'Инженер-конструктор разрабатывает, как будет устроена машина или деталь: из каких материалов, с какими размерами, как будет собираться. Это «архитектор» техники — от самолётов до холодильников.',
+    career:[{title:'Техник-конструктор',years:'0–2 года'},{title:'Инженер-конструктор',years:'2–5 лет'},{title:'Ведущий конструктор',years:'5–10 лет'},{title:'Главный конструктор',years:'10+ лет'},{title:'Руководитель КБ',years:'15+ лет'}],
+    salary:{start:'55 000 ₽',mid:'120 000 ₽',senior:'250 000+ ₽'},
+    features:[{icon:'💻',text:'<b>CAD-программы</b> — работа за компьютером с 3D-моделями'},{icon:'📐',text:'<b>Точность</b> — каждая деталь должна совпасть до микрона'},{icon:'🎓',text:'<b>Высшее образование</b> — нужно инженерное или техническое'}],
+    opportunities:[{icon:'🚀',text:'<b>Участие в больших проектах</b> — от автомобилей до ракет'},{icon:'💰',text:'<b>Высокий доход</b> — хорошие конструкторы в дефиците'},{icon:'🌍',text:'<b>Работа в наукоёмких отраслях</b> — авиация, космос, робототехника'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — ошибка в чертеже может привести к аварии'},{icon:'🖥',text:'<b>Много времени за компьютером</b> — нагрузка на глаза и спину'},{icon:'⏰',text:'<b>Сроки</b> — иногда приходится работать сверхурочно перед сдачей проекта'}],
+    fact:'Инженеры-конструкторы NASA потратили <b>10 лет</b> на разработку марсохода Curiosity, а проект стоил 2,5 миллиарда долларов.'
+  },
+  locksmith: {
+    name:'Слесарь-механик', emoji:'🔧', cat:'manufacturing',
+    tags:{hands:3, tech:2, stable:2, money:1},
+    why:'Ты любишь возиться с механизмами и не боишься физической работы — слесарь-механик это твоё. Ты можешь починить всё, что движется.',
+    desc:'Слесарь-механик — «врач» для механизмов. Он собирает, разбирает, ремонтирует и обслуживает станки, машины, оборудование. Без него завод встанет, а машина не поедет.',
+    career:[{title:'Ученик слесаря',years:'0–1 год'},{title:'Слесарь-механик',years:'1–3 года'},{title:'Слесарь высшего разряда',years:'3–7 лет'},{title:'Бригадир',years:'7+ лет'},{title:'Мастер участка',years:'12+ лет'}],
+    salary:{start:'40 000 ₽',mid:'80 000 ₽',senior:'150 000+ ₽'},
+    features:[{icon:'🔧',text:'<b>Работа руками</b> — нужны навыки и инструменты'},{icon:'⚙️',text:'<b>Понимание механики</b> — как устроены машины и станки'},{icon:'🏭',text:'<b>Завод или мастерская</b> — работа в цеху или автосервисе'}],
+    opportunities:[{icon:'📈',text:'<b>Быстрый рост</b> — опытный слесарь всегда востребован'},{icon:'💰',text:'<b>Хороший доход</b> — на заводах и в нефтянке платят много'},{icon:'🌍',text:'<b>Везде нужен</b> — завод, порт, шахта, автосервис'}],
+    risks:[{icon:'⚠️',text:'<b>Травмы</b> — порезы, ушибы, работа с тяжёлыми деталями'},{icon:'🏭',text:'<b>Шум и грязь</b> — работа в цеху — это спецодежда и шум'},{icon:'🫁',text:'<b>Профзаболевания</b> — пыль, вибрация, химия'}],
+    fact:'Хороший слесарь может «на слух» определить, какая деталь в механизме сломалась — без разборки.'
+  },
+  automechanic: {
+    name:'Автомеханик', emoji:'🚗', cat:'mechanical',
+    tags:{hands:3, tech:2, solo:2, money:1, stable:1},
+    why:'Ты любишь машины и умеешь работать руками — тебе подходит ремесло автомеханика. Ты можешь открыть свой сервис и работать на себя.',
+    desc:'Автомеханик — «врач» автомобилей. Он ищет поломки, меняет детали, проводит техобслуживание. В эпоху электромобилей механики учатся работать с компьютерами и электроникой.',
+    career:[{title:'Ученик механика',years:'0–1 год'},{title:'Автомеханик',years:'1–3 года'},{title:'Мастер-механик',years:'3–7 лет'},{title:'Бригадир',years:'7+ лет'},{title:'Владелец автосервиса',years:'10+ лет'}],
+    salary:{start:'35 000 ₽',mid:'80 000 ₽',senior:'180 000+ ₽'},
+    features:[{icon:'🚗',text:'<b>Работа руками</b> — нужны инструменты и понимание устройства авто'},{icon:'💻',text:'<b>Современные технологии</b> — современные машины требуют компьютеров'},{icon:'🔧',text:'<b>Постоянное обучение</b> — новые модели, новые технологии'}],
+    opportunities:[{icon:'💼',text:'<b>Свой автосервис</b> — можно открыть своё дело'},{icon:'📈',text:'<b>Рост дохода</b> — хорошие мастера на вес золота'},{icon:'🌍',text:'<b>Везде нужен</b> — машин всё больше'}],
+    risks:[{icon:'⚠️',text:'<b>Травмы</b> — порезы, ушибы, ожоги'},{icon:'🏭',text:'<b>Тяжёлые условия</b> — грязь, холод, работа в неудобных позах'},{icon:'🫁',text:'<b>Вредные вещества</b> — бензин, масло, выхлопные газы'}],
+    fact:'Современный электромобиль содержит <b>около 10 000 микросхем</b> — механикам приходится разбираться в электронике.'
+  },
+  robotics: {
+    name:'Инженер-робототехник', emoji:'🤖', cat:'mechanical',
+    tags:{science:3, tech:3, design:2, creativity:2},
+    why:'Ты любишь науку, технику и придумывать новое — робототехника идеально подходит. Ты можешь создавать роботов, которые изменят мир.',
+    desc:'Инженер-робототехник — на стыке механики, электроники и программирования. Он проектирует роботов, программирует их, тестирует. Роботы заменяют людей на опасных и точных работах.',
+    career:[{title:'Помощник инженера',years:'0–2 года'},{title:'Инженер-робототехник',years:'2–5 лет'},{title:'Ведущий инженер',years:'5–10 лет'},{title:'Руководитель проекта',years:'10+ лет'},{title:'Технический директор',years:'15+ лет'}],
+    salary:{start:'60 000 ₽',mid:'130 000 ₽',senior:'300 000+ ₽'},
+    features:[{icon:'🤖',text:'<b>Наука и творчество</b> — нужно придумывать и программировать'},{icon:'💻',text:'<b>Программирование</b> — роботы управляются кодом'},{icon:'🎓',text:'<b>Много учиться</b> — нужны знания в механике, электронике, IT'}],
+    opportunities:[{icon:'🚀',text:'<b>Профессия будущего</b> — роботов становится всё больше'},{icon:'💰',text:'<b>Очень высокий доход</b> — робототехники в дефиците'},{icon:'🌍',text:'<b>Много отраслей</b> — заводы, медицина, космос, сельское хозяйство'}],
+    risks:[{icon:'📚',text:'<b>Долгая учёба</b> — нужно высшее образование и постоянное развитие'},{icon:'⚠️',text:'<b>Ответственность</b> — ошибка в программе может привести к травме'},{icon:'🕐',text:'<b>Сложные проекты</b> — от идеи до готового робота годы'}],
+    fact:'В мире уже <b>более 3,5 миллионов промышленных роботов</b>. Больше всего их в Южной Корее и Японии.'
+  },
+  power: {
+    name:'Инженер-энергетик', emoji:'⚡', cat:'energy',
+    tags:{science:2, tech:2, stable:2, risk:1, team:1},
+    why:'Ты любишь стабильность и хочешь, чтобы всё работало без сбоев — энергетика подходит. Ты будешь отвечать за свет в домах и работу заводов.',
+    desc:'Инженер-энергетик — «хранитель света». Он следит за работой электростанций, сетей, подстанций. Без него не будет ни света в домах, ни работы заводов.',
+    career:[{title:'Техник-энергетик',years:'0–2 года'},{title:'Инженер-энергетик',years:'2–5 лет'},{title:'Ведущий инженер',years:'5–10 лет'},{title:'Главный инженер',years:'10+ лет'},{title:'Директор энергокомпании',years:'15+ лет'}],
+    salary:{start:'55 000 ₽',mid:'110 000 ₽',senior:'250 000+ ₽'},
+    features:[{icon:'⚡',text:'<b>Ответственная работа</b> — от тебя зависит свет в домах'},{icon:'🌍',text:'<b>Крупные объекты</b> — электростанции, подстанции, сети'},{icon:'📊',text:'<b>Точность</b> — работа с высоким напряжением требует внимания'}],
+    opportunities:[{icon:'💰',text:'<b>Стабильный доход</b> — энергетика — одна из самых стабильных отраслей'},{icon:'📈',text:'<b>Карьера</b> — от техника до директора'},{icon:'🌍',text:'<b>Зелёная энергетика</b> — новое направление с большими перспективами'}],
+    risks:[{icon:'⚡',text:'<b>Опасность</b> — работа с высоким напряжением'},{icon:'🌡',text:'<b>Условия</b> — иногда работать на морозе, на высоте, в грозу'},{icon:'🚨',text:'<b>Аварии</b> — при ЧП приходится выезжать в любое время суток'}],
+    fact:'Одна крупная электростанция может дать электричество <b>миллиону домов</b>. А в энергосистеме России около 700 электростанций.'
+  },
+  electronics: {
+    name:'Инженер-электронщик', emoji:'🔌', cat:'electronics',
+    tags:{science:2, tech:3, design:1, solo:2},
+    why:'Ты любишь разбираться в микросхемах и электронике — тебе подходит эта профессия. Ты можешь создавать «мозги» для любой техники.',
+    desc:'Инженер-электронщик создаёт «мозги» современной техники: микросхемы, платы, датчики. Это он придумывает, как будет работать ваш смартфон, телевизор, холодильник или робот.',
+    career:[{title:'Техник-электронщик',years:'0–2 года'},{title:'Инженер-электронщик',years:'2–5 лет'},{title:'Ведущий инженер',years:'5–10 лет'},{title:'Главный конструктор',years:'10+ лет'},{title:'Технический директор',years:'15+ лет'}],
+    salary:{start:'55 000 ₽',mid:'120 000 ₽',senior:'280 000+ ₽'},
+    features:[{icon:'🔬',text:'<b>Работа с микроэлектроникой</b> — нужны знания физики и химии'},{icon:'💻',text:'<b>Программирование</b> — чипы управляются кодом'},{icon:'🖥',text:'<b>Работа в лаборатории</b> — паяльник, осциллограф, тесты'}],
+    opportunities:[{icon:'🚀',text:'<b>Профессия будущего</b> — электроника везде: от машин до медицины'},{icon:'💰',text:'<b>Высокий доход</b> — хорошие специалисты в дефиците'},{icon:'🌍',text:'<b>Крупные компании</b> — можно работать в международных корпорациях'}],
+    risks:[{icon:'📚',text:'<b>Долгая учёба</b> — нужны глубокие знания'},{icon:'👁',text:'<b>Нагрузка на глаза</b> — работа с мелкими деталями'},{icon:'🚀',text:'<b>Быстрые изменения</b> — технологии меняются каждые 2–3 года, нужно постоянно учиться'}],
+    fact:'В современном смартфоне <b>больше вычислительной мощности</b>, чем было у компьютеров NASA, которые отправили человека на Луну в 1969 году.'
+  },
+  foodtech: {
+    name:'Технолог пищевого производства', emoji:'🍞', cat:'food',
+    tags:{science:2, design:2, creativity:2, team:1, money:1},
+    why:'Ты любишь пробовать новое и придумывать вкусы — тебе подходит пищевое производство. Ты можешь создавать продукты, которые будут любить миллионы.',
+    desc:'Технолог пищевого производства — «шеф-повар» завода. Он разрабатывает рецептуры, следит за качеством, контролирует производство. Именно он придумывает, каким будет вкус любимого йогурта или шоколада.',
+    career:[{title:'Лаборант',years:'0–1 год'},{title:'Технолог',years:'1–3 года'},{title:'Ведущий технолог',years:'3–7 лет'},{title:'Главный технолог',years:'7+ лет'},{title:'Директор производства',years:'12+ лет'}],
+    salary:{start:'45 000 ₽',mid:'90 000 ₽',senior:'180 000+ ₽'},
+    features:[{icon:'🔬',text:'<b>Наука и творчество</b> — нужно разбираться в химии и кулинарии'},{icon:'👅',text:'<b>Дегустация</b> — часть работы — пробовать продукты'},{icon:'🏭',text:'<b>Производство</b> — работа на заводе, в цеху и в лаборатории'}],
+    opportunities:[{icon:'🍽',text:'<b>Создавать новое</b> — можно придумывать продукты, которых ещё не было'},{icon:'💼',text:'<b>Своё дело</b> — можно запустить собственное производство'},{icon:'🌍',text:'<b>Крупные бренды</b> — работа в международных компаниях'}],
+    risks:[{icon:'⚠️',text:'<b>Ответственность</b> — брак в партии = отзыв продуктов с полок'},{icon:'🏭',text:'<b>Условия</b> — работа в цеху с шумом и запахами'},{icon:'🍽',text:'<b>Вкусовые тесты</b> — иногда приходится пробовать не очень вкусные варианты'}],
+    fact:'Чтобы создать новый вкус чипсов или газировки, технологи проводят <b>сотни дегустаций</b> и тестов, прежде чем продукт попадёт в магазин.'
+  },
+  fashiondesigner: {
+    name:'Дизайнер одежды', emoji:'👕', cat:'textile',
+    tags:{design:3, creativity:3, solo:2, money:1},
+    why:'Ты творческий и хочешь придумывать красивое — тебе подходит дизайн одежды. Ты можешь создать свой бренд и показывать коллекции.',
+    desc:'Дизайнер одежды — художник моды. Он придумывает коллекции, выбирает ткани, разрабатывает фасоны. От его идей зависит, что будут носить люди в следующем сезоне.',
+    career:[{title:'Помощник дизайнера',years:'0–2 года'},{title:'Дизайнер одежды',years:'2–5 лет'},{title:'Ведущий дизайнер',years:'5–10 лет'},{title:'Главный дизайнер бренда',years:'10+ лет'},{title:'Основатель бренда',years:'15+ лет'}],
+    salary:{start:'40 000 ₽',mid:'90 000 ₽',senior:'300 000+ ₽'},
+    features:[{icon:'🎨',text:'<b>Творчество</b> — главное в профессии'},{icon:'✂️',text:'<b>Технические навыки</b> — шитьё, конструирование, работа с тканью'},{icon:'📸',text:'<b>Показы и фотосессии</b> — нужно уметь продвигать свои работы'}],
+    opportunities:[{icon:'🌟',text:'<b>Известность</b> — лучшие дизайнеры становятся мировыми звёздами'},{icon:'💼',text:'<b>Свой бренд</b> — можно открыть свою марку одежды'},{icon:'🌍',text:'<b>Международная карьера</b> — мода не знает границ'}],
+    risks:[{icon:'📉',text:'<b>Нестабильный доход</b> — зависит от сезона и заказов'},{icon:'⚔️',text:'<b>Жёсткая конкуренция</b> — пробиться в индустрию моды сложно'},{icon:'⏰',text:'<b>Дедлайны</b> — перед показами работают круглосуточно'}],
+    fact:'В мире моды каждый год проводится <b>около 100 крупных недель моды</b> — от Парижа до Токио.'
+  },
+  chemist: {
+    name:'Химик-технолог', emoji:'🧪', cat:'chemistry',
+    tags:{science:3, tech:2, lab:2, stable:1},
+    why:'Ты любишь науку и хочешь создавать новое — химия-технология подходит. Ты можешь придумывать материалы и лекарства, которые изменят жизни людей.',
+    desc:'Химик-технолог разрабатывает технологии производства: пластмасс, лекарств, красок, удобрений. Именно он придумывает, как из сырья получить готовый продукт.',
+    career:[{title:'Лаборант',years:'0–2 года'},{title:'Химик-технолог',years:'2–5 лет'},{title:'Ведущий технолог',years:'5–10 лет'},{title:'Главный технолог',years:'10+ лет'},{title:'Директор производства',years:'15+ лет'}],
+    salary:{start:'50 000 ₽',mid:'100 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'🔬',text:'<b>Наука</b> — химия, физика, математика'},{icon:'🧪',text:'<b>Лаборатория и производство</b> — работа в лаборатории и цеху'},{icon:'⚠️',text:'<b>Безопасность</b> — работа с химикатами требует осторожности'}],
+    opportunities:[{icon:'🚀',text:'<b>Инновации</b> — новые материалы и лекарства'},{icon:'💰',text:'<b>Хороший доход</b> — опытные химики ценятся'},{icon:'🌍',text:'<b>Крупные компании</b> — фармацевтика, нефтехимия, косметика'}],
+    risks:[{icon:'⚠️',text:'<b>Химическая опасность</b> — работа с токсичными веществами'},{icon:'📚',text:'<b>Долгая учёба</b> — высшее образование обязательно'},{icon:'🧪',text:'<b>Ошибки дорого стоят</b> — брак в партии лекарств недопустим'}],
+    fact:'Современная химия создаёт <b>более 100 000 новых веществ в год</b> — от лекарств до упаковки.'
+  },
+  logistician: {
+    name:'Логист производства', emoji:'📦', cat:'manufacturing',
+    tags:{org:3, team:2, money:2, stable:2},
+    why:'Ты умеешь организовывать и планировать — тебе подходит работа логиста. От тебя будет зависеть, чтобы завод не останавливался.',
+    desc:'Логист производства — «дирижёр» цепочки поставок. Он следит, чтобы сырьё приходило вовремя, а готовая продукция отправлялась покупателям. Без логиста завод встанет.',
+    career:[{title:'Помощник логиста',years:'0–1 год'},{title:'Логист',years:'1–3 года'},{title:'Старший логист',years:'3–7 лет'},{title:'Руководитель отдела',years:'7+ лет'},{title:'Директор по цепочкам поставок',years:'12+ лет'}],
+    salary:{start:'45 000 ₽',mid:'90 000 ₽',senior:'200 000+ ₽'},
+    features:[{icon:'📊',text:'<b>Планирование</b> — нужно думать на несколько шагов вперёд'},{icon:'🚚',text:'<b>Транспорт</b> — работа с перевозчиками и складами'},{icon:'💼',text:'<b>Переговоры</b> — нужно договариваться с поставщиками'}],
+    opportunities:[{icon:'📈',text:'<b>Быстрый рост</b> — от логиста до директора по цепочкам'},{icon:'💰',text:'<b>Хороший доход</b> — опытные логисты на вес золота'},{icon:'🌍',text:'<b>Международная работа</b> — можно вести глобальные поставки'}],
+    risks:[{icon:'⏰',text:'<b>Стресс</b> — когда поставка опаздывает, а завод ждёт'},{icon:'🌍',text:'<b>Сложности с границами</b> — таможня, документы, задержки'},{icon:'📉',text:'<b>Срывы поставок</b> — нужно быстро искать альтернативы'}],
+    fact:'В современной компании логистика может занимать <b>до 30% себестоимости продукта</b> — поэтому хороший логист экономит миллионы.'
+  }
+};
+
+const TAG_INFO = {
+  construction:{emoji:'🏗', label:'Стройка'},
+  factory:{emoji:'🏭', label:'Завод'},
+  lab:{emoji:'🧪', label:'Лаборатория'},
+  office:{emoji:'📋', label:'Офис'},
+  hands:{emoji:'🛠', label:'Руки'},
+  science:{emoji:'🔬', label:'Наука'},
+  tech:{emoji:'💻', label:'Технологии'},
+  design:{emoji:'📐', label:'Дизайн'},
+  creativity:{emoji:'🎨', label:'Творчество'},
+  money:{emoji:'💰', label:'Бизнес'},
+  team:{emoji:'👥', label:'Команда'},
+  solo:{emoji:'🧘', label:'Сам по себе'},
+  org:{emoji:'📊', label:'Организация'},
+  risk:{emoji:'⚡', label:'Риск'},
+  stable:{emoji:'🏠', label:'Стабильность'}
+};
+
+/* ==================== СОСТОЯНИЕ ==================== */
+let state = {
+  screen:'intro',
+  currentQ:0,
+  answers:[],
+  tags:{},
+  results:[]
+};
+
+const $ = id => document.getElementById(id);
+const main = () => $('main');
+
+/* ==================== ФОН ==================== */
+(function initBG(){
+  const layer = document.getElementById('bgFX');
+  if(!layer) return;
+  try{
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      layer.style.display = 'none'; return;
+    }
+  }catch(e){}
+
+  const SYMBOLS = ['🏭','⚙️','🔧','🔨','🛠','🏗','🚧','👷','📦','🚚','⚡','🔌','💡','🖥','📱','📐','🚗','✈️','🚂','🏢','🔩','🔋'];
+  const COLORS = ['#f97316','#fb923c','#fbbf24','#3b82f6','#93c5fd','#ffffff','#a78bfa','#cbd5e1'];
+
+  const COUNT = window.innerWidth < 600 ? 16 : 28;
+  const frag = document.createDocumentFragment();
+  for(let i = 0; i < COUNT; i++){
+    const wrap = document.createElement('span');
+    wrap.className = 'bg-item';
+    wrap.setAttribute('aria-hidden','true');
+    wrap.textContent = SYMBOLS[Math.floor(Math.random()*SYMBOLS.length)];
+    wrap.style.fontSize = (18 + Math.random()*30).toFixed(1) + 'px';
+    wrap.style.left = (Math.random()*100).toFixed(2) + 'vw';
+    wrap.style.color = COLORS[Math.floor(Math.random()*COLORS.length)];
+    wrap.style.setProperty('--op', (0.06 + Math.random()*0.10).toFixed(3));
+    wrap.style.setProperty('--dx', (Math.random()*200 - 100).toFixed(0) + 'px');
+    wrap.style.setProperty('--rot', (Math.random()*60 - 30).toFixed(0) + 'deg');
+    const dur = 40 + Math.random()*50;
+    wrap.style.animationDuration = dur.toFixed(1) + 's';
+    wrap.style.animationDelay = (-Math.random()*dur).toFixed(1) + 's';
+    frag.appendChild(wrap);
+  }
+  layer.appendChild(frag);
+})();
+
+/* ==================== ЗВУК ==================== */
+let AC = null;
+function beep(freq=880, dur=0.15, type='sine'){
+  try{
+    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state === 'suspended') AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12, AC.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + dur);
+    o.start(); o.stop(AC.currentTime + dur + 0.02);
+  }catch(e){}
+}
+function soundClick(){ beep(660, 0.08); }
+function soundOpen(){ beep(880,0.12); beep(1100,0.1); setTimeout(()=>beep(1320,0.1), 80); }
+function soundSuccess(){ beep(880,0.1); setTimeout(()=>beep(1046,0.1), 90); setTimeout(()=>beep(1318,0.2), 180); }
+
+/* ==================== КОНФЕТТИ ==================== */
+function confetti(n = 30){
+  const emo = ['🏭','✨','🎉','🌟','💰','🏅','⚙️','🔧','💎','⭐','🎊','🏆','🔨'];
+  const fx = $('fx');
+  for(let i = 0; i < n; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = emo[Math.floor(Math.random()*emo.length)];
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.top = '-30px';
+    p.style.animationDuration = (1.1+Math.random()*1.2) + 's';
+    p.style.fontSize = (16+Math.random()*18) + 'px';
+    fx.appendChild(p);
+    setTimeout(()=>p.remove(), 2500);
+  }
+}
+
+/* ==================== ИНТРО ==================== */
+function renderIntro(){
+  state = { screen:'intro', currentQ:0, answers:[], tags:{}, results:[] };
+  main().innerHTML = `
+    <section class="card">
+      <div class="intro-hero">
+        <div class="ih-emoji">🏭</div>
+        <h1>Какая профессия <span>вторичного сектора</span> — твоя?</h1>
+        <p>Ответь на <b>10 коротких вопросов</b> — и узнаешь, какие профессии подходят тебе больше всего. В конце — <b>топ-3</b> специальности, <b>диаграмма всех 15</b> и подробное описание каждой.</p>
+      </div>
+
+      <div class="intro-stats">
+        <div class="stat-card">
+          <span class="sc-emoji">❓</span>
+          <div class="sc-num">10</div>
+          <div class="sc-label">вопросов</div>
+        </div>
+        <div class="stat-card">
+          <span class="sc-emoji">⏱</span>
+          <div class="sc-num">3–4</div>
+          <div class="sc-label">минуты</div>
+        </div>
+        <div class="stat-card">
+          <span class="sc-emoji">🏭</span>
+          <div class="sc-num">15</div>
+          <div class="sc-label">профессий</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startBtn" type="button">
+        🚀 Начать тест
+      </button>
+    </section>
+  `;
+
+  $('startBtn').addEventListener('click', () => {
+    soundClick();
+    state.screen = 'question';
+    state.currentQ = 0;
+    renderQuestion();
+  });
+}
+
+/* ==================== ВОПРОС ==================== */
+function renderQuestion(){
+  const q = QUESTIONS[state.currentQ];
+  const progress = (state.currentQ / QUESTIONS.length) * 100;
+  const letters = ['А','Б','В','Г','Д','Е'];
+
+  main().innerHTML = `
+    <section class="card">
+      <div class="progress-row">
+        <span>Вопрос ${state.currentQ + 1} из ${QUESTIONS.length}</span>
+        <span class="pr-num">${Math.round(progress)}% пройдено</span>
+      </div>
+      <div class="progress-bar"><div style="width:${progress}%"></div></div>
+
+      <div class="question-emoji">${q.emoji}</div>
+      <h2 class="question-text">${q.q}</h2>
+
+      <div class="options" id="options">
+        ${q.options.map((opt, i) => `
+          <button class="option-btn" data-i="${i}" type="button">
+            <span class="ob-letter">${letters[i]}</span>
+            <span class="ob-text">${opt.text}</span>
+            <span class="ob-arrow">→</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="back-row">
+        <button class="back-btn" id="backBtn" type="button" ${state.currentQ === 0 ? 'disabled' : ''}>← Назад</button>
+        <span class="back-hint">Выбери один вариант</span>
+      </div>
+    </section>
+  `;
+
+  document.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleAnswer(+btn.dataset.i));
+  });
+
+  $('backBtn').addEventListener('click', () => {
+    if(state.currentQ > 0){
+      soundClick();
+      state.currentQ--;
+      if(state.answers[state.currentQ]){
+        const removed = state.answers[state.currentQ];
+        removed.tags.forEach(t => { state.tags[t] = (state.tags[t] || 0) - 1; });
+      }
+      state.answers = state.answers.slice(0, state.currentQ);
+      renderQuestion();
+    }
+  });
+}
+
+function handleAnswer(idx){
+  const q = QUESTIONS[state.currentQ];
+  const opt = q.options[idx];
+  soundClick();
+  state.answers[state.currentQ] = { idx, tags: opt.tags };
+  opt.tags.forEach(t => { state.tags[t] = (state.tags[t] || 0) + 1; });
+
+  if(state.currentQ < QUESTIONS.length - 1){
+    state.currentQ++;
+    renderQuestion();
+  } else {
+    state.screen = 'result';
+    renderResult();
+  }
+}
+
+/* ==================== РЕЗУЛЬТАТ ==================== */
+function calculateResults(){
+  return Object.entries(PROFESSIONS).map(([id, p]) => {
+    let score = 0;
+    for(const [tag, weight] of Object.entries(p.tags)){
+      score += (state.tags[tag] || 0) * weight;
+    }
+    return { id, ...p, score };
+  }).sort((a, b) => b.score - a.score);
+}
+
+function renderResult(){
+  const results = calculateResults();
+  const topScore = results[0].score || 1;
+  results.forEach(r => { r.percent = Math.round(r.score / topScore * 100); });
+  state.results = results;
+
+  const top1 = results[0], top2 = results[1], top3 = results[2];
+  const userTags = Object.entries(state.tags)
+    .filter(([_, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4);
+
+  main().innerHTML = `
+    <section class="card">
+      <div class="result-hero">
+        <div class="rh-medal">🏆</div>
+        <div class="rh-tag">Твой топ-выбор</div>
+        <h2>${top1.name}</h2>
+        <div class="rh-prof">${top1.emoji} ${top1.name}</div>
+        <p class="rh-why">${top1.why}</p>
+      </div>
+
+      <div class="traits-row">
+        <div class="tr-title">💪 Твои главные сильные стороны:</div>
+        <div class="traits-chips">
+          ${userTags.map(([tag]) => `
+            <span class="trait-chip">${TAG_INFO[tag].emoji} ${TAG_INFO[tag].label}</span>
+          `).join('')}
+        </div>
+      </div>
+
+      <h3 style="font-size:16px;font-weight:900;color:var(--ink);margin:24px 0 12px">
+        🥇 Ещё две профессии, которые тебе подходят
+      </h3>
+
+      <div class="top-list">
+        ${[top1, top2, top3].map((p, i) => `
+          <div class="top-item ${i === 0 ? 'first' : ''}">
+            <div class="ti-medal">${['🥇','🥈','🥉'][i]}</div>
+            <div class="ti-body">
+              <div class="ti-name">${p.emoji} ${p.name}</div>
+              <div class="ti-cat">${CATEGORIES[p.cat].emoji} ${CATEGORIES[p.cat].name}</div>
+              <div class="ti-bar"><div style="width:${p.percent}%"></div></div>
+            </div>
+            <div class="ti-percent">${p.percent}%</div>
+            <button class="ti-detail" data-prof="${p.id}" type="button">Подробнее →</button>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="chart-section">
+        <div class="chart-title">📊 Совпадение по всем 15 профессиям</div>
+        <div class="chart-rows">
+          ${results.map((p, i) => `
+            <div class="chart-row ${i === 0 ? 'first' : ''} ${CATEGORIES[p.cat].cls}"
+                 data-prof="${p.id}">
+              <div class="cr-head">
+                <span class="cr-emoji">${p.emoji}</span>
+                <span class="cr-name">${p.name}</span>
+              </div>
+              <div class="cr-percent">${p.percent}%</div>
+              <div class="cr-bar-wrap">
+                <div class="cr-bar" style="width:${p.percent}%"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-secondary" id="retryBtn" type="button">↺ Пройти заново</button>
+        <button class="btn-primary" id="shareBtn" type="button">📋 Скопировать результат</button>
+      </div>
+    </section>
+  `;
+
+  document.querySelectorAll('[data-prof]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if(e.target.classList.contains('ti-detail')) return;
+      openProfessionModal(el.dataset.prof);
+    });
+  });
+  document.querySelectorAll('.ti-detail').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openProfessionModal(btn.dataset.prof);
+    });
+  });
+
+  confetti(40);
+  setTimeout(() => confetti(25), 400);
+  soundSuccess();
+
+  setTimeout(() => {
+    document.querySelectorAll('.cr-bar').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0';
+      setTimeout(() => { bar.style.width = w; }, 50);
+    });
+  }, 200);
+
+  $('retryBtn').addEventListener('click', () => { soundClick(); renderIntro(); });
+
+  $('shareBtn').addEventListener('click', () => {
+    const text = `Мой топ-3 профессии вторичного сектора:\n🥇 ${top1.name} (${top1.percent}%)\n🥈 ${top2.name} (${top2.percent}%)\n🥉 ${top3.name} (${top3.percent}%)\n\nПрошёл(ла) тест в «Мягкой математике»`;
+    copyText(text).then(ok => showToast(ok ? '📋 Скопировано!' : 'Не удалось скопировать'));
+  });
+}
+
+/* ==================== МОДАЛКА ==================== */
+function openProfessionModal(id){
+  const p = PROFESSIONS[id];
+  if(!p) return;
+  const cat = CATEGORIES[p.cat];
+
+  const head = $('modalHead');
+  head.className = 'modal-head ' + cat.cls;
+  $('mhEmoji').textContent = p.emoji;
+  $('mhTitle').textContent = p.name;
+  $('mhCat').textContent = cat.emoji + ' ' + cat.name;
+
+  $('modalBody').innerHTML = `
+    <div class="m-section">
+      <h3 class="m-section-title icon-about">📖 Что это за профессия</h3>
+      <p class="m-desc">${p.desc}</p>
+    </div>
+
+    <div class="m-section">
+      <h3 class="m-section-title icon-track">🚀 Карьерный трек</h3>
+      <div class="career-track">
+        ${p.career.map((step, i) => `
+          <div class="career-step">
+            <div class="cs-num">${i + 1}</div>
+            <div class="cs-title">${step.title}</div>
+            <div class="cs-years">${step.years}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="salary-row">
+        <div class="salary-card">
+          <div class="sc-label">Старт</div>
+          <div class="sc-value">${p.salary.start}</div>
+          <div class="sc-sub">в начале пути</div>
+        </div>
+        <div class="salary-card">
+          <div class="sc-label">Специалист</div>
+          <div class="sc-value">${p.salary.mid}</div>
+          <div class="sc-sub">через 3–5 лет</div>
+        </div>
+        <div class="salary-card">
+          <div class="sc-label">Эксперт</div>
+          <div class="sc-value">${p.salary.senior}</div>
+          <div class="sc-sub">через 10+ лет</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-section">
+      <h3 class="m-section-title icon-feat">🎯 Особенности</h3>
+      <ul class="m-list feat">
+        ${p.features.map(f => `<li><span class="ml-icon">${f.icon}</span><span class="ml-text">${f.text}</span></li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="m-section">
+      <h3 class="m-section-title icon-opp">🌟 Возможности</h3>
+      <ul class="m-list opp">
+        ${p.opportunities.map(o => `<li><span class="ml-icon">${o.icon}</span><span class="ml-text">${o.text}</span></li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="m-section">
+      <h3 class="m-section-title icon-risk">⚠️ Риски</h3>
+      <ul class="m-list risk">
+        ${p.risks.map(r => `<li><span class="ml-icon">${r.icon}</span><span class="ml-text">${r.text}</span></li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="m-section">
+      <h3 class="m-section-title icon-fact">💡 Интересный факт</h3>
+      <div class="fact-box">${p.fact}</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-secondary" type="button" onclick="closeProfessionModal()">← К результату</button>
+    </div>
+  `;
+
+  $('modalOverlay').classList.add('open');
+  soundOpen();
+}
+
+function closeProfessionModal(){
+  $('modalOverlay').classList.remove('open');
+  soundClick();
+}
+
+$('modalClose').addEventListener('click', closeProfessionModal);
+$('modalOverlay').addEventListener('click', e => {
+  if(e.target === $('modalOverlay')) closeProfessionModal();
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && $('modalOverlay').classList.contains('open')) closeProfessionModal();
+});
+
+function copyText(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).then(() => true).catch(() => fallbackCopy(text));
+  }
+  return Promise.resolve(fallbackCopy(text));
+}
+function fallbackCopy(text){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  }catch(e){ return false; }
+}
+
+function showToast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._id);
+  t._id = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ==================== СТАРТ ==================== */
+renderIntro();
+</script>
+</body>
+</html>
